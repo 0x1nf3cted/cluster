@@ -1,3 +1,9 @@
+# AUteur: 0x1nf3cted
+# Date: October 30, 2024
+# Description:  extractions des données utile, sans connaitre la structure html
+
+
+
 import requests
 from sentence_transformers import SentenceTransformer
 from bs4 import BeautifulSoup

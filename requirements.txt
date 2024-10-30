@@ -1,0 +1,7 @@
+requests
+sentence-transformers
+beautifulsoup4
+numpy
+selenium
+webdriver-manager
+scikit-learn

@@ -1,3 +1,11 @@
+#
+# AUteur: 0x1nf3cted
+# Date: October 30, 2024
+# Description:  ça fait du clustering (homme, femme, autre, ect...)
+
+
+
+
 import json
 from sentence_transformers import SentenceTransformer
 import numpy as np
@@ -12,18 +20,14 @@ def load_data(file_path):
 
 def preprocess_url(url):
     """Extract meaningful text from URL."""
-    # Decode URL-encoded characters
     url = unquote(url)
-    # Remove common URL components
     url = re.sub(r'https?://|www\.|\.com|\.fr|[0-9]|[^\w\s]', ' ', url)
-    # Convert to lowercase and remove extra spaces
     return ' '.join(url.lower().split())
 
 def preprocess_title(title):
     """Clean and preprocess title text."""
     if not title:
         return ""
-    # Convert to lowercase and remove special characters
     title = re.sub(r'[^\w\s]', ' ', title.lower())
     return ' '.join(title.split())
 
@@ -33,7 +37,6 @@ class URLClassifier:
         self.categories = categories
         self.category_descriptions = category_descriptions
         
-        # Pre-compute embeddings for category descriptions
         self.category_embeddings = {}
         for category, descriptions in self.category_descriptions.items():
             embeddings = self.model.encode(descriptions)
@@ -41,19 +44,15 @@ class URLClassifier:
 
     def classify_url(self, title, link):
         """Classify a single URL based on its title and link."""
-        # Preprocess input
         processed_title = preprocess_title(title)
         processed_url = preprocess_url(link)
         
-        # Combine title and URL text, if title exists
         text_to_encode = f"{processed_title} {processed_url}".strip()
         if not text_to_encode:
             return "unknown"
         
-        # Get embedding for the URL
         url_embedding = self.model.encode([text_to_encode])[0]
         
-        # Calculate similarity with each category
         similarities = {}
         for category, category_embedding in self.category_embeddings.items():
             similarity = cosine_similarity(
@@ -62,11 +61,9 @@ class URLClassifier:
             )[0][0]
             similarities[category] = similarity
         
-        # Return the category with highest similarity
         best_category = max(similarities.items(), key=lambda x: x[1])
         
-        # Only classify if similarity is above threshold
-        if best_category[1] > 0.15:  # Adjust threshold as needed
+        if best_category[1] > 0.15:   
             return best_category[0]
         return "unknown"
 
@@ -112,14 +109,11 @@ def main():
         ]
     }
 
-    # Load data
     urls_data = load_data('links.json')
 
-    # Initialize and run classifier
     classifier = URLClassifier(categories, category_descriptions)
     results = classifier.classify_urls(urls_data)
 
-    # Save results
     with open('output.json', 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 
