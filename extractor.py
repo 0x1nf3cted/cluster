@@ -373,7 +373,7 @@ class GenericProductExtractor:
 def main():
     extractor = GenericProductExtractor()
     
-    url = "https://www.kiabi.be/fr/jean-slim-a-5-poches-l34-bleu_P830455C852780"
+    url = "www.example.com"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
