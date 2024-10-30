@@ -5,6 +5,12 @@ import numpy as np
 from typing import Dict, List, Tuple
 import re
 from selenium import webdriver
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from dataclasses import dataclass
 import json
 
@@ -303,7 +309,7 @@ class GenericProductExtractor:
         
         # Extract regular elements
         elements = self._extract_structured_elements(soup)
-        
+        print(elements)
         # Process text elements
         text_elements = [e for e in elements if e['type'] == 'text']
         if text_elements:
@@ -367,7 +373,7 @@ class GenericProductExtractor:
 def main():
     extractor = GenericProductExtractor()
     
-    url = "https://www.adidas.fr/gilet-matelasse-adidas-originals-70s/JN9554.html"
+    url = "https://www.kiabi.be/fr/jean-slim-a-5-poches-l34-bleu_P830455C852780"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -383,9 +389,10 @@ def main():
         "Cache-Control": "max-age=0"
     }
     response = requests.get(url, headers=headers)
+    if(response.status_code != 200):
+        raise  Exception("Failed to retrieve page")
+
     html = response.text
-
-
     results = extractor.extract_info(html)
     
     print("\nExtracted Information:")
