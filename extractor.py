@@ -255,7 +255,9 @@ class GenericProductExtractor:
     
 
     def _semantic_similarity(self, text_embedding: np.ndarray, concept_embeddings: np.ndarray) -> float:
-        """Calculate semantic similarity between text and concept embeddings."""
+        """Calculate semantic similarity between text and concept embeddings.""" 
+        # trucs de matheux tous ça
+        # en gros ça calcule la distance entre des vecteurs pour savoir si c'est similaire ou non
         similarities = [np.dot(text_embedding, concept_emb) / 
                        (np.linalg.norm(text_embedding) * np.linalg.norm(concept_emb))
                        for concept_emb in concept_embeddings]
@@ -282,9 +284,11 @@ class GenericProductExtractor:
         # Initialize results
         results = {}
         
-        # Extract structured data first
+        # Des fois ça marche, la plus part du temps ça marche pas
         json_ld_data = self._extract_json_ld(soup)
         print(json_ld_data)
+
+        # la  plus part du temp, ça retourne rien, mais je le met "en cas ou"
         meta_data = self._extract_meta_data(soup)
         print(meta_data)
         
@@ -302,12 +306,11 @@ class GenericProductExtractor:
                     results['price'] = ProductAttribute(
                         str(offers['price']), 1.0, 'structured-data', 'json-ld')
         
-        # Add meta data
         for key, value in meta_data.items():
             if key not in results:
                 results[key] = ProductAttribute(value, 0.9, 'meta-tags', 'meta')
         
-        # Extract regular elements
+        # nous y est,  on peut passer à l'extractions
         elements = self._extract_structured_elements(soup)
         print(elements)
         # Process text elements
@@ -357,13 +360,13 @@ class GenericProductExtractor:
                     if any(kw in img['context'].lower() for kw in ['product', 'main', 'primary']):
                         score += 0.2
                     return score
-
+                # pour le moment je sélectionne la "meilleur image", mais plus tard faut stocker tous les images de produits
                 best_image = max(images, key=image_score)
                 results['image'] = ProductAttribute(
                     best_image['src'],
                     image_score(best_image),
                     'img',
-                    best_image['text']  # Use alt text as context
+                    best_image['text']  # Use alt text as context, 
                 )
 
 
@@ -374,6 +377,7 @@ def main():
     extractor = GenericProductExtractor()
     
     url = "www.example.com"
+    # des headers car certains sites cassent les couilles
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
